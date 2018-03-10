@@ -151,9 +151,9 @@ else{
 
 
 //####################
-app.get('/PHistory', function (req, res) {
+app.get('/Patient/GetProfile', function (req, res) {
 
-  var token = req.headers['auth'];
+  var token = req.headers['authorization'];
   console.log(req.headers)
   if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
   
