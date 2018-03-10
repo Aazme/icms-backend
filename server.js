@@ -5,6 +5,9 @@
 const express = require('express'); 
 const mysql = require('mysql');
 const bodyParser = require('body-parser');
+var jwt = require('jsonwebtoken');
+var bcrypt = require('bcryptjs');
+
 
 var app = express(); 
 app.use(bodyParser.json()); // support jkoson encoded bodies
@@ -114,44 +117,69 @@ db.query(sql,function(err,result){
       throw err;
   }
   RowNumber = JSON.stringify(result.length) ;
-  console.log(JSON.stringify(result));
-  var token = jwt.sign({ id: username }, { password: password })
+  console.log(JSON.stringify(result[0].patient_ID));
+
+  var token = jwt.sign({ id: result[0].patient_ID }, "thisistopsecret", {
+    expiresIn: 86400 // expires in 24 hours
+  });
+
+
+
+
+  //var token = jwt.sign({ id: username }, { password: password })
   console.log(token);
   if (RowNumber == 0)
 {
-res.send("Wrong Username & password");
+  var responemsg = {
+    data:"Wrong Username & password",
+    Success:false,
+    error:"R1"
+  }
+res.send(responemsg);
 }
 else{
-res.send("True")
+  var responemsg = {
+    data:{access_token:token},
+    Success:true,
+    error:null
+  }
+  res.send(responemsg)
 }
-
-  
   });
 
 });
+
+
 //####################
-app.post('/Pinfo', function (req, res) {
-  var username = req.body['username'];
+app.get('/PHistory', function (req, res) {
+
+  var token = req.headers['auth'];
+  console.log(req.headers)
+  if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
   
-  var sql= "SELECT Blood type ,temDES , address,  FROM Patient WHERE Username = '"+ username +"';"
-  var RowNumber;
-  
-  db.query(sql,function(err,result){
-    if (err){     
-        throw err;
-    }
-    RowNumber = JSON.stringify(result.length) ;
-    console.log(JSON.stringify(result));
-    if (RowNumber == 0)
-  {
-  res.send("Wrong Username ");
-  }
-  else{
-  res.send("True")
-  }
+  jwt.verify(token, "thisistopsecret", function(err, decoded) {
+    if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+    
+    // we have the ID OF user in decoded.id variable
+    var sql="SELECT * FROM patient where patient_ID = "+decoded.id+";"
+
+    db.query(sql,function(err,result){
+      if (err){     
+          throw err;
+      }
+       console.log('Data added ! created.!');
+       res.send(result)
+      })
+
+    
+  })
 });
 
-//################
+
+
+
+
+//################ NOT USED NOW
 app.post('/Pinfo', function (req, res) {
 
   var temDES = req.body['temDES'];
@@ -166,9 +194,7 @@ db.query(sql,function(err,result){
 // okay let's send back to the front-end , he is waiting for us to tell him if we could do it! :)
 
 res.send("I DID IT ! :)");
-})
-
-})
+});
 
 
 
