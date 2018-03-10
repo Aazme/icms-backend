@@ -1,8 +1,7 @@
 // Firstly where are the package.json file? you forgot "npm init" command
 // and you didn't download the packages, "npm install express && Npm install mysql"
 
-
-
+// comment 
 const express = require('express'); 
 const mysql = require('mysql');
 const bodyParser = require('body-parser');
