@@ -7,11 +7,11 @@ const mysql = require('mysql');
 const bodyParser = require('body-parser');
 
 var app = express(); 
-app.use(bodyParser.json()); // support json encoded bodies
+app.use(bodyParser.json()); // support jkoson encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
 
-var db = mysql.createConnection({
+var db = mysql.createConnection({ 
   host: "localhost",
   user: "root",
   password: "12345678",
@@ -32,7 +32,7 @@ db.connect(function (error) {
  
 app.post('/Psignup', function (req, res) {
 
-	
+	   
 //  SURE WE CAN ADD MORE :) IT'S JUST EXAMPLE
 // NOW we need to insert into the DB the email& user-name & Password
 // let's take them into variables first
