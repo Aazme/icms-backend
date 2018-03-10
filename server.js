@@ -175,7 +175,30 @@ app.get('/Patient/GetProfile', function (req, res) {
   })
 });
 
+app.post('/Manger/AddEmp',function(req , res){
 
+  var token = req.headers['authorization'];
+  console.log(req.headers)
+  if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+  
+  jwt.verify(token, "thisistopsecret", function(err, decoded) {
+    if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+  
+  var name = req.body['empName'];
+  var job = req.body['empJob'];
+  var salary = req.body['empSalary'];
+
+
+var sql ="INSERT INTO `emp`( `emp_Name`, `emp_job`, `emp_salary`) VALUES ('"+name+ "','"+job+ "','"+salary+ "')"
+db.query(sql,function(err,result){
+  if (err){     
+      throw err;
+  }
+   console.log('Data added ! created.!');
+   res.send(result)
+  })
+})
+})
 
 
 
