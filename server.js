@@ -14,7 +14,7 @@ app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 var db = mysql.createConnection({ 
   host: "localhost",
   user: "root",
-  password: "12345678",
+  password: "",
   database: "icms"
 });
 
@@ -97,10 +97,11 @@ res.send("True")
 });
 
 app.post('/Psignin', function (req, res) {
-
+  
 
 var username = req.body['username'];
 var password = req.body['password'];
+
   console.log(username +"<<-----")
     console.log(password +"<<-----")
 var sql= "SELECT * FROM Patient WHERE Username = '"+ username +"' and password = '"+password+"';"
@@ -114,6 +115,8 @@ db.query(sql,function(err,result){
   }
   RowNumber = JSON.stringify(result.length) ;
   console.log(JSON.stringify(result));
+  var token = jwt.sign({ id: username }, { password: password })
+  console.log(token);
   if (RowNumber == 0)
 {
 res.send("Wrong Username & password");
@@ -129,6 +132,7 @@ res.send("True")
 //####################
 app.post('/Pinfo', function (req, res) {
   var username = req.body['username'];
+  
   var sql= "SELECT Blood type ,temDES , address,  FROM Patient WHERE Username = '"+ username +"';"
   var RowNumber;
   
