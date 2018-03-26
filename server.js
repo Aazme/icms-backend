@@ -99,17 +99,14 @@ res.send("True")
 
 });
 
-app.post('/Psignin', function (req, res) {
+app.post('/signin', function (req, res) {
   
 
 var username = req.body['username'];
 var password = req.body['password'];
 
-  console.log(username +"<<-----")
-    console.log(password +"<<-----")
-var sql= "SELECT * FROM Patient WHERE Username = '"+ username +"' and password = '"+password+"';"
+var sql= "SELECT * FROM users WHERE Username = '"+ username +"' and password = '"+password+"';"
 
-//var sql = "SELECT Doc_ID FROM Doctors WHERE Username ='ALY' and password = '123';"
 var RowNumber;
 
 db.query(sql,function(err,result){
@@ -117,14 +114,11 @@ db.query(sql,function(err,result){
       throw err;
   }
   RowNumber = JSON.stringify(result.length) ;
-  console.log(JSON.stringify(result[0].patient_ID));
+  console.log(JSON.stringify(result[0].RoleID));
 
-  var token = jwt.sign({ id: result[0].patient_ID }, "thisistopsecret", {
+  var token = jwt.sign({ id: result[0].RoleID }, "thisistopsecret", {
     expiresIn: 86400 // expires in 24 hours
   });
-
-
-
 
   //var token = jwt.sign({ id: username }, { password: password })
   console.log(token);
