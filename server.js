@@ -1,3 +1,4 @@
+ 
 // Firstly where are the package.json file? you forgot "npm init" command
 // and you didn't download the packages, "npm install express && Npm install mysql"
 
@@ -28,6 +29,7 @@ db.connect(function (error) {
   console.log('connected');
 });
 
+// Role checking function
 
 
 
@@ -69,35 +71,6 @@ res.send("I DID IT ! :)");
 })
  
  
-app.post('/Drsignin', function (req, res) {
-
-
-var username = req.body['username'];
-var password = req.body['password'];
-  console.log(username +"<<-----")
-    console.log(password +"<<-----")
-var sql= "SELECT Doc_ID FROM Doctors WHERE Username = '"+ username +"' and password = '"+password+"';"
-
-//var sql = "SELECT Doc_ID FROM Doctors WHERE Username ='ALY' and password = '123';"
-var RowNumber;
-
-db.query(sql,function(err,result){
-  if (err){     
-      throw err;
-  }
-  RowNumber = JSON.stringify(result.length) ;
-  if (RowNumber == 0)
-{
-res.send("Wrong Username & password");
-}
-else{
-res.send("True")
-}
-
-  
-  });
-
-});
 
 app.post('/signin', function (req, res) {
   
@@ -106,7 +79,7 @@ var username = req.body['username'];
 var password = req.body['password'];
 
 var sql= "SELECT * FROM users WHERE Username = '"+ username +"' and password = '"+password+"';"
-
+console.log(username)
 var RowNumber;
 
 db.query(sql,function(err,result){
@@ -114,14 +87,9 @@ db.query(sql,function(err,result){
       throw err;
   }
   RowNumber = JSON.stringify(result.length) ;
-  console.log(JSON.stringify(result[0].RoleID));
+ 
 
-  var token = jwt.sign({ id: result[0].RoleID }, "thisistopsecret", {
-    expiresIn: 86400 // expires in 24 hours
-  });
 
-  //var token = jwt.sign({ id: username }, { password: password })
-  console.log(token);
   if (RowNumber == 0)
 {
   var responemsg = {
@@ -132,10 +100,16 @@ db.query(sql,function(err,result){
 res.send(responemsg);
 }
 else{
+  var token = jwt.sign({ userid: result[0].User_ID}, "thisistopsecret", {
+    expiresIn: 86400 // expires in 24 hours
+  });
+  console.log(token);
+
   var responemsg = {
-    data:{access_token:token},
+    data:{access_token:token,Roleid:result[0].RoleID},
     Success:true,
     error:null
+
   }
   res.send(responemsg)
 }
@@ -143,26 +117,36 @@ else{
 
 });
 
+function CheckingRole (userid,roleid){
+  // check User Role
+   
+  var sql = "SELECT RoleID FROM users where User_ID=" + userid+";";
+  
+  db.query(sql,function(err,result){
+    if (err){     
+      
+        throw err;
+    }
+   result =  JSON.stringify(result[0].RoleID)
 
+    console.log("result is " + result)
+if (result == roleid){  return true; }
+else { return false;}
+  });
+}
 //####################
 app.get('/Patient/GetProfile', function (req, res) {
-
-  var token = req.headers['authorization'];
-  console.log(req.headers)
-  if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
-  
-  jwt.verify(token, "thisistopsecret", function(err, decoded) {
-    if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
-    
+  var Role=3;
+  x
     // we have the ID OF user in decoded.id variable
-    var sql="SELECT * FROM patient where patient_ID = "+decoded.id+";"
+    var sql="SELECT * FROM patient where user_ID = "+decoded.userid+";"
 
     db.query(sql,function(err,result){
       if (err){     
           throw err;
       }
-       console.log('Data added ! created.!');
-       res.send(result)
+       console.log('Data retrieved !' + result[0]);
+       res.send(result[0])
       })
 
     
@@ -215,35 +199,6 @@ res.send("I DID IT ! :)");
 
 
 
-
-app.post('/Esignin', function (req, res) {
-
-
-var username = req.body['username'];
-var password = req.body['password'];
-
-var sql= "SELECT emp_ID FROM Patient WHERE Username = '"+ username +"' and password = '"+password+"';"
-
-//var sql = "SELECT Doc_ID FROM Doctors WHERE Username ='ALY' and password = '123';"
-var RowNumber;
-
-db.query(sql,function(err,result){
-  if (err){     
-      throw err;
-  }
-  RowNumber = JSON.stringify(result.length) ;
-  if (RowNumber == 0)
-{
-res.send("Wrong Username & password");
-}
-else{
-res.send("True")
-}
-
-  
-  });
-
-});
 
 
 
