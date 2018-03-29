@@ -137,7 +137,7 @@ else { return false;}
 //####################
 app.get('/Patient/GetProfile', function (req, res) {
   var Role=3;
-  x
+  
     // we have the ID OF user in decoded.id variable
     var sql="SELECT * FROM patient where user_ID = "+decoded.userid+";"
 
@@ -151,7 +151,8 @@ app.get('/Patient/GetProfile', function (req, res) {
 
     
   })
-});
+
+//##########################################################################################3
 
 app.post('/Manger/AddEmp',function(req , res){
 
@@ -165,9 +166,11 @@ app.post('/Manger/AddEmp',function(req , res){
   var name = req.body['empName'];
   var job = req.body['empJob'];
   var salary = req.body['empSalary'];
+  var EmpAddress = req.body['empaddress']
+  var EmpPhoneNumber = req.body['empnumber']
+  var emp_ID = req.body['emp_ID'];
 
-
-var sql ="INSERT INTO `emp`( `emp_Name`, `emp_job`, `emp_salary`) VALUES ('"+name+ "','"+job+ "','"+salary+ "')"
+var sql ="INSERT INTO `emp`( `emp_ID`,`emp_Name`, `emp_job`, `emp_salary`,`EmpAddress`,`EmpPhoneNumber`) VALUES ('"+emp_ID+ "','"+name+ "','"+job+ "','"+salary+ "','"+EmpAddress+ "''"+EmpPhoneNumber+ "')"
 db.query(sql,function(err,result){
   if (err){     
       throw err;
@@ -177,6 +180,227 @@ db.query(sql,function(err,result){
   })
 })
 })
+
+app.post('/Manger/DeleteEmp',function(req , res){
+
+  var token = req.headers['authorization']; // 23rf mnen an el token da vailed 
+  console.log(req.headers)
+  if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+  
+  jwt.verify(token, "thisistopsecret", function(err, decoded) {
+    if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+  
+  var name = req.body['empName'];
+
+var sql ="DELETE FROM `emp` WHERE `emp_Name` = '"+name+ "'" ;
+db.query(sql,function(err,result){
+  if (err){     
+      throw err;
+  }
+   console.log('Data added ! created.!');
+   res.send(result)
+  })
+})
+})
+
+app.post('/Manger/UpdateEmp',function(req , res){
+
+  var token = req.headers['authorization']; 
+  if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+  
+  jwt.verify(token, "thisistopsecret", function(err, decoded) {
+    if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+  
+    var name = req.body['empName'];
+    var job = req.body['empJob'];
+    var salary = req.body['empSalary'];
+    var EmpAddress = req.body['empaddress']
+    var EmpPhoneNumber = req.body['empnumber']
+    var emp_ID = req.body['emp_ID']
+
+var sql = "UPDATE `emp` SET `emp_Name`='"+name+ "',`emp_job`='"+job+ "',`emp_salary`='"+salary+ "',`EmpAddress`='"+EmpAddress+ "',`EmpPhoneNumber`='"+EmpPhoneNumber+ "' WHERE `emp_ID`='"+emp_ID+ "'"
+db.query(sql,function(err,result){
+  if (err){     
+      throw err;
+  }
+   console.log('Data added ! created.!');
+   res.send(result)
+  })
+})
+})
+
+
+//##################################################################################333
+
+app.post('/Manger/AddClinic',function(req , res){
+
+  var token = req.headers['authorization'];
+  console.log(req.headers)
+  if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+  
+  jwt.verify(token, "thisistopsecret", function(err, decoded) {
+    if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+  
+  var Clinic_ID = req.body['C_ID'];
+  var ClinicName = req.body['C_Name'];
+  var Clinic_ava = req.body['C_ava'];
+
+var sql ="INSERT INTO `clinics`(`clinic_ID`, `Name`, `avalibality`) VALUES ('"+ClinicName+ "','"+Clinic_ID+ "','"+Clinic_ava+ "')"
+db.query(sql,function(err,result){
+  if (err){     
+      throw err;
+  }
+   console.log('clinic added ! ');
+   res.send(result)
+  })
+})
+})
+
+app.post('/Manger/DeleteClinic',function(req , res){
+
+  var token = req.headers['authorization'];
+  console.log(req.headers)
+  if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+  
+  jwt.verify(token, "thisistopsecret", function(err, decoded) {
+    if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+  
+  var ClinicName = req.body['C_Name'];
+  
+var sql ="DELETE FROM `clinics` WHERE `Name` = '"+ClinicName+ "'";
+
+db.query(sql,function(err,result){
+  if (err){     
+      throw err;
+  }
+   console.log('clinic added ! ');
+   res.send(result)
+  })
+})
+})
+
+
+
+app.post('/Manger/UpdateClinic',function(req , res){
+
+  var token = req.headers['authorization'];
+  console.log(req.headers)
+  if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+  
+  jwt.verify(token, "thisistopsecret", function(err, decoded) {
+    if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+
+    var Clinic_ID = req.body['C_ID'];
+    var ClinicName = req.body['C_Name'];
+    var Clinic_ava = req.body['C_ava'];
+
+var sql ="UPDATE `clinics` SET `Name`='"+ClinicName+ "',`avalibality`='"+Clinic_ava+ "' WHERE `clinic_ID`='"+Clinic_ID+ "'"
+
+
+db.query(sql,function(err,result){
+  if (err){     
+      throw err;
+  }
+   console.log('clinic added ! ');
+   res.send(result)
+  })
+})
+})
+//###########################################################################################################
+
+app.post('/Manger/AddDoctor',function(req , res){
+
+  var token = req.headers['authorization'];
+  console.log(req.headers)
+  if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+  
+  jwt.verify(token, "thisistopsecret", function(err, decoded) {
+    if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+  /// ######### EL USER ID !!! ##########
+  var DOC_ID = req.body['DocID'];
+  var Name = req.body['name'];
+  var PhoneNumber = req.body['phoneNum'];
+  var specialized = req.body['specialized']
+  var price = req.body['price']
+  
+
+var sql ="INSERT INTO `doctors`(`Doc_ID`, `Name`, `PhoneNumber`, `specialized`, `price`, `User_ID`) VALUES ('"+DOC_ID+ "','"+Name+ "','"+PhoneNumber+ "','"+specialized+ "','"+EmpAddress+ "''"+price+ "')"
+db.query(sql,function(err,result){
+  if (err){     
+      throw err;
+  }
+   console.log('Data added ! created.!');
+   res.send(result)
+  })
+})
+})
+
+app.post('/Manger/DeleteDoctor',function(req , res){
+
+  var token = req.headers['authorization'];
+  console.log(req.headers)
+  if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+  
+  jwt.verify(token, "thisistopsecret", function(err, decoded) {
+    if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+ 
+  var DOC_ID = req.body['DocID'];
+  var Name = req.body['name'];
+  var PhoneNumber = req.body['phoneNum'];
+  var specialized = req.body['specialized']
+  var price = req.body['price']
+  
+
+var sql ="DELETE FROM `doctors` WHERE `Name` = '"+Name+ "'";
+db.query(sql,function(err,result){
+  if (err){     
+      throw err;
+  }
+   console.log('Data added ! created.!');
+   res.send(result)
+  })
+})
+})
+
+
+app.post('/Manger/UpdateDoctor',function(req , res){
+
+  var token = req.headers['authorization'];
+  console.log(req.headers)
+  if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+  
+  jwt.verify(token, "thisistopsecret", function(err, decoded) {
+    if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+ 
+  var DOC_ID = req.body['DocID'];
+  var Name = req.body['name'];
+  var PhoneNumber = req.body['phoneNum'];
+  var specialized = req.body['specialized']
+  var price = req.body['price']
+  
+
+var sql ="DELETE FROM `doctors` WHERE `Name` = '"+Name+ "'";
+"UPDATE `doctors` SET `Name`='"+Name+ "',`PhoneNumber`='"+PhoneNumber+ "',`specialized`='"+specialized+ "', `price`='"+price+ "'WHERE `Doc_ID`='"+Doc_ID+ "'";
+
+db.query(sql,function(err,result){
+  if (err){     
+      throw err;
+  }
+   console.log('Data added ! created.!');
+   res.send(result)
+  })
+})
+})
+
+
+
+
+
+
+
+
+
+
 
 
 
