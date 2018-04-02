@@ -476,9 +476,86 @@ db.query(sql,function(err,result){
 })
 
 
+app.post('/Manger/GetAllEmployees',function(req , res){
 
+  var token = req.headers['authorization'];
+  console.log(req.headers)
+  if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+  
+  jwt.verify(token, "thisistopsecret", function(err, decoded) {
+    if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+ 
+var sql ="SELECT * FROM Emp"
 
+db.query(sql,function(err,result){
+  if (err){     
+      throw err;
+  }
+   console.log('Data added ! created.!');
+   
+          var Response = {
+         Data:result,
+         Success:true,
+         errors:null
+       }
+       res.send(Response)
+  })
+})
+})
 
+app.post('/Manger/GetAllDoctors',function(req , res){
+
+  var token = req.headers['authorization'];
+  console.log(req.headers)
+  if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+  
+  jwt.verify(token, "thisistopsecret", function(err, decoded) {
+    if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+ 
+var sql ="SELECT * FROM Doctors"
+
+db.query(sql,function(err,result){
+  if (err){     
+      throw err;
+  }
+   console.log('Data added ! created.!');
+   
+          var Response = {
+         Data:result,
+         Success:true,
+         errors:null
+       }
+       res.send(Response)
+  })
+})
+})
+
+app.post('/Manger/GetAllPatient',function(req , res){
+
+  var token = req.headers['authorization'];
+  console.log(req.headers)
+  if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+  
+  jwt.verify(token, "thisistopsecret", function(err, decoded) {
+    if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+ 
+var sql ="SELECT * FROM Patient"
+
+db.query(sql,function(err,result){
+  if (err){     
+      throw err;
+  }
+   console.log('Data added ! created.!');
+   
+          var Response = {
+         Data:result,
+         Success:true,
+         errors:null
+       }
+       res.send(Response)
+  })
+})
+})
 
 //######################################################################################################
 

@@ -9,18 +9,29 @@ current Endpoints are:
 /Manger/DeleteEmp
 /Manger/UpdateEmp
 
-/Manger/AddClinic
-/Manger/DeleteClinic
-/Manger/UpdateClinic
+/Manger/AddClinic --> ID auto increment 
+/Manger/DeleteClinic --> Tested
+/Manger/UpdateClinic --> Tested
 
 
 /Manger/AddDoctor
 /Manger/DeleteDoctor
 /Manger/UpdateDoctor
 
+/Manger/GetAllPatient
+/Manger/GetAllDoctors
+/Manger/GetAllEmployees
 
 
-/Patient/GetProfile
+/Patient/GetProfile --> Tested
+/Employee/GetProfile --> ^^
+/Doctor/GetProfile  -->  ^^
+
+
+
+
+
+
 
 commands
 
