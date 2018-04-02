@@ -11,7 +11,7 @@ var bcrypt = require('bcryptjs');
 
 
 var app = express(); 
-app.use(bodyParser.json()); // support jkoson encoded bodies
+app.use(bodyParser.json()); // support joson encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
 
@@ -134,23 +134,38 @@ if (result == roleid){  return true; }
 else { return false;}
   });
 }
-//####################
+//################################################################################
 app.get('/Patient/GetProfile', function (req, res) {
-    var Role=3;
-  
-    // we have the ID OF user in decoded.id variable
-    var sql="SELECT * FROM patient where user_ID = "+decoded.userid+";"
 
-    db.query(sql,function(err,result){
-      if (err){     
-          throw err;
-      }
-       console.log('Data retrieved !' + result[0]);
-       res.send(result[0])
-      })
+ var Role=3;
+ var token = req.headers['authorization'];
+ console.log(token)
+ if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+ 
+ jwt.verify(token, "thisistopsecret", function(err, decoded) {
+   if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+ var Name =  req.body['name'];
+ var address = req.body['address'];
+ var dateOfBirth =req.body['dateOfBirth'];
+ var phoneNumber =req.body['phoneNumber'];
+ var BloodType=req.body['BloodType'];
+ var temDES = req.body['temDES'];
+ var patient_ID= req.body['patient_ID']
+ 
+    // we have the ID OF user in decoded.id variable
+   var sql="SELECT * FROM patient where user_ID = "+decoded.patient_ID+";"
+
+  db.query(sql,function(err,result){
+     if (err){     
+        throw err;
+     }
+      console.log('Data retrieved !' + result[0]);
+      res.send(result[0])
+      
+     })
 
     
-  })
+    })});
 
 //##########################################################################################3
 
@@ -170,7 +185,7 @@ app.post('/Manger/AddEmp',function(req , res){
   var EmpPhoneNumber = req.body['empnumber']
   var emp_ID = req.body['emp_ID'];
 
-var sql ="INSERT INTO `emp`( `emp_ID`,`emp_Name`, `emp_job`, `emp_salary`,`EmpAddress`,`EmpPhoneNumber`) VALUES ('"+emp_ID+ "','"+name+ "','"+job+ "','"+salary+ "','"+EmpAddress+ "''"+EmpPhoneNumber+ "')"
+var sql ="INSERT INTO `emp`( `emp_ID`,`emp_Name`, `emp_job`, `emp_salary`,`EmpAddress`,`EmpPhoneNumber`) VALUES ('"+emp_ID+ "','"+name+ "','"+job+ "','"+salary+ "','"+EmpAddress+ "''"+EmpPhoneNumber+ "')";
 db.query(sql,function(err,result){
   if (err){     
       throw err;
@@ -397,29 +412,35 @@ db.query(sql,function(err,result){
 
 
 
+//######################################################################################################
 
 
-
-
-
-
-
-//################ NOT USED NOW
-app.post('/Pinfo', function (req, res) {
-
+/*app.post('/Patient/GetProfile', function (req, res) {
+  var token = req.headers['authorization'];
+  console.log(token)
+  if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+  
+  jwt.verify(token, "thisistopsecret", function(err, decoded) {
+    if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+  var Name =  req.body['name'];
+  var address = req.body['address'];
+  var dateOfBirth =req.body['dateOfBirth'];
+  var phoneNumber =req.body['phoneNumber'];
+  var BloodType=req.body['BloodType'];
   var temDES = req.body['temDES'];
-  var sql="INSERT INTO `Patient` (  `temDES` ) VALUES ('"+temDES+ "');"
+  var patient_ID= req.body['patient_ID']
+  var sql=" SELECT * FROM `patient` WHERE patient_ID='"+patient_ID+"'";
 
 db.query(sql,function(err,result){
   if (err){     
       throw err;
   }
-   console.log('Data added ! created.!');
+   console.log('Data found ! created.!');
 })
 // okay let's send back to the front-end , he is waiting for us to tell him if we could do it! :)
 
 res.send("I DID IT ! :)");
-});
+})});*/
 
 
 
