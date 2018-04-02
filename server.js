@@ -136,7 +136,6 @@ else { return false;}
 }
 //################################################################################
 app.get('/Patient/GetProfile', function (req, res) {
-
  var Role=3;
  var token = req.headers['authorization'];
  console.log(token)
@@ -144,23 +143,22 @@ app.get('/Patient/GetProfile', function (req, res) {
  
  jwt.verify(token, "thisistopsecret", function(err, decoded) {
    if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
- var Name =  req.body['name'];
- var address = req.body['address'];
- var dateOfBirth =req.body['dateOfBirth'];
- var phoneNumber =req.body['phoneNumber'];
- var BloodType=req.body['BloodType'];
- var temDES = req.body['temDES'];
- var patient_ID= req.body['patient_ID']
- 
+
     // we have the ID OF user in decoded.id variable
-   var sql="SELECT * FROM patient where user_ID = "+decoded.patient_ID+";"
+   var sql="SELECT * FROM patient where user_ID = "+decoded.userid+";"
 
   db.query(sql,function(err,result){
      if (err){     
         throw err;
      }
       console.log('Data retrieved !' + result[0]);
-      res.send(result[0])
+
+      var Response = {
+        Data:result[0],
+        Success:true,
+        errors:null
+      }
+      res.send(Response)
       
      })
 
@@ -168,6 +166,70 @@ app.get('/Patient/GetProfile', function (req, res) {
     })});
 
 //##########################################################################################3
+
+app.get('/Doctor/GetProfile', function (req, res) {
+  var Role=3;
+  var token = req.headers['authorization'];
+  console.log(token)
+  if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+  
+  jwt.verify(token, "thisistopsecret", function(err, decoded) {
+    if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+ 
+     // we have the ID OF user in decoded.id variable
+    var sql="SELECT * FROM Doctors where user_ID = "+decoded.userid+";"
+ 
+   db.query(sql,function(err,result){
+      if (err){     
+         throw err;
+      }
+       console.log('Data retrieved !' + result[0]);
+ 
+       var Response = {
+         Data:result[0],
+         Success:true,
+         errors:null
+       }
+       res.send(Response)
+       
+      })
+ 
+     
+     })});
+ 
+ //##########################################################################################3
+
+ app.get('/Employee/GetProfile', function (req, res) {
+  var Role=3;
+  var token = req.headers['authorization'];
+  console.log(token)
+  if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+  
+  jwt.verify(token, "thisistopsecret", function(err, decoded) {
+    if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+ 
+     // we have the ID OF user in decoded.id variable
+    var sql="SELECT * FROM emp where user_ID = "+decoded.userid+";"
+ 
+   db.query(sql,function(err,result){
+      if (err){     
+         throw err;
+      }
+       console.log('Data retrieved !' + result[0]);
+ 
+       var Response = {
+         Data:result[0],
+         Success:true,
+         errors:null
+       }
+       res.send(Response)
+       
+      })
+ 
+     
+     })});
+ 
+ //##########################################################################################3
 
 app.post('/Manger/AddEmp',function(req , res){
 
@@ -260,12 +322,18 @@ app.post('/Manger/AddClinic',function(req , res){
   var ClinicName = req.body['C_Name'];
   var Clinic_ava = req.body['C_ava'];
 
-var sql ="INSERT INTO `clinics`(`clinic_ID`, `Name`, `avalibality`) VALUES ('"+ClinicName+ "','"+Clinic_ID+ "','"+Clinic_ava+ "')"
+var sql ="INSERT INTO `clinics`(`clinic_ID`, `Name`, `avalibality`) VALUES ('"+Clinic_ID+ "','"+ClinicName+ "','"+Clinic_ava+ "')"
 db.query(sql,function(err,result){
   if (err){     
       throw err;
   }
    console.log('clinic added ! ');
+   var result = {
+      data:"Clinic Added",
+      Success:true,
+      error: null
+    
+   }
    res.send(result)
   })
 })
@@ -288,7 +356,7 @@ db.query(sql,function(err,result){
   if (err){     
       throw err;
   }
-   console.log('clinic added ! ');
+   console.log('clinic deleted ! ');
    res.send(result)
   })
 })
@@ -309,7 +377,7 @@ app.post('/Manger/UpdateClinic',function(req , res){
     var ClinicName = req.body['C_Name'];
     var Clinic_ava = req.body['C_ava'];
 
-var sql ="UPDATE `clinics` SET `Name`='"+ClinicName+ "',`avalibality`='"+Clinic_ava+ "' WHERE `clinic_ID`='"+Clinic_ID+ "'"
+var sql ="UPDATE `clinics` SET `Name`='"+ClinicName+ "',`avalibality`='"+Clinic_ava+ "' WHERE `clinic_ID`='"+Clinic_ID+ "'" ;
 
 
 db.query(sql,function(err,result){
