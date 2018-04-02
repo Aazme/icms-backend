@@ -609,37 +609,6 @@ db.query(sql,function(err,result){
 //######################################################################################################
 
 
-/*app.post('/Patient/GetProfile', function (req, res) {
-  var token = req.headers['authorization'];
-  console.log(token)
-  if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
-  
-  jwt.verify(token, "thisistopsecret", function(err, decoded) {
-    if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
-  var Name =  req.body['name'];
-  var address = req.body['address'];
-  var dateOfBirth =req.body['dateOfBirth'];
-  var phoneNumber =req.body['phoneNumber'];
-  var BloodType=req.body['BloodType'];
-  var temDES = req.body['temDES'];
-  var patient_ID= req.body['patient_ID']
-  var sql=" SELECT * FROM `patient` WHERE patient_ID='"+patient_ID+"'";
-
-db.query(sql,function(err,result){
-  if (err){     
-      throw err;
-  }
-   console.log('Data found ! created.!');
-})
-// okay let's send back to the front-end , he is waiting for us to tell him if we could do it! :)
-
-res.send("I DID IT ! :)");
-})});*/
-
-
-
-
-
 
 // you forgot the server host,ports .. how can you run the server ? Front-end and Back-end are independent.
 
