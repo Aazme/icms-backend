@@ -136,7 +136,7 @@ else { return false;}
 }
 //####################
 app.get('/Patient/GetProfile', function (req, res) {
-  var Role=3;
+    var Role=3;
   
     // we have the ID OF user in decoded.id variable
     var sql="SELECT * FROM patient where user_ID = "+decoded.userid+";"
