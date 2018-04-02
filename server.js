@@ -31,7 +31,7 @@ db.connect(function (error) {
 
 // Role checking function
 
-
+//##########################################################################################################################
 
 // Where is the API ( webserice ) that should be called ? ( www.example.com/api/register )
  
@@ -164,6 +164,55 @@ app.get('/Patient/GetProfile', function (req, res) {
 
     
     })});
+//##############################################################################################
+app.post('/Patient/EditProfile', function (req, res) {
+  var Role=3;
+  
+  var token = req.headers['authorization'];
+  console.log(token)
+  if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+  
+  jwt.verify(token, "thisistopsecret", function(err, decoded) {
+    if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+    var Name =  req.body['name'];
+    var address = req.body['address'];
+    var dateOfBirth =req.body['dateOfBirth'];
+    var phoneNumber =req.body['phoneNumber'];
+    var BloodType=req.body['BloodType'];
+    var temDES = req.body['temDES'];
+    var patient_ID= req.body['patient_ID']
+     // we have the ID OF user in decoded.id variable
+    var sql=" UPDATE `patient` SET `Name`='"+Name+ "',`address`='"+address+ "',`date Of  Birth`='"+dateOfBirth+ "',`phone number`='"+phoneNumber+ "',`Blood type`='"+BloodType+ "',`temDES`='"+temDES+ "' where user_ID = "+decoded.userid+";"
+  
+    
+   db.query(sql,function(err,result){
+      if (err){     
+         throw err;
+      }
+       console.log('Data editied !' + result[0]);
+ 
+       var Response = {
+         Data:result[0],
+         Success:true,
+         errors:null
+       }
+       res.send(Response)
+       
+      })
+ 
+     
+     })});
+
+
+
+
+
+
+
+
+
+
+
 
 //##########################################################################################3
 
