@@ -439,6 +439,25 @@ db.query(sql,function(err,result){
 })
 })
 //###########################################################################################################
+app.post('/Clinic/GetAll ',function(req , res){
+
+  var token = req.headers['authorization'];
+  console.log(req.headers)
+  if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+  
+  jwt.verify(token, "thisistopsecret", function(err, decoded) {
+    if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+    var sql ="SELECT * FROM `clinics` ";
+    db.query(sql,function(err,result){
+      if (err){     
+          throw err;
+      }
+       console.log('Data founded ');
+       res.send(result)
+      })
+    })
+    })
+//###########################################################################################################
 
 app.post('/Manger/AddDoctor',function(req , res){
 
@@ -524,7 +543,48 @@ db.query(sql,function(err,result){
 })
 })
 
+//############################################################################################################
+/*billid = create new row in bill
+prescriptionId = create new row in prescription
+docid = get doctor id by name(given)
+clinicid = get clinic id by name(given)
+patientid= get patient id by user id(given)
+empid = NULL
+completed = 0
+paid = 0
+appointmentdate = (given)
+Transactiondate = current */
+//#########################################
+app.post('/Clinic/GetTime',function(req , res){
 
+  var token = req.headers['authorization'];
+  console.log(req.headers)
+  if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+  
+  jwt.verify(token, "thisistopsecret", function(err, decoded) {
+    if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+ 
+var sql ="SELECT `availability`.`Days`, `availability`.`TIMEFROM`, `availability`.`TIMETO`, `doctors`.`Name`, `clinics`.`Name` FROM `availability` , `doctors` , `clinics` WHERE (( `doctors`.`Name` = 'HMED') AND ( clinics.Name = 'skull'))
+"
+
+db.query(sql,function(err,result){
+  if (err){     
+      throw err;
+  }
+   console.log('Data added ! created.!');
+   
+          var Response = {
+         Data:result,
+         Success:true,
+         errors:null
+       }
+       res.send(Response)
+  })
+})
+})
+
+
+//############################################################################################################
 app.post('/Manger/GetAllEmployees',function(req , res){
 
   var token = req.headers['authorization'];
