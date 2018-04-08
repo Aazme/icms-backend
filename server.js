@@ -257,7 +257,7 @@ app.get('/Doctor/GetProfile', function (req, res) {
     if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
       var DRNAME = req.body['DRNAME'];
      // we have the ID OF user in decoded.id variable
-    var sql="SELECT * FROM `transactions` WHERE  Doc_ID = "+decoded.DRNAME+"; and Completed ="+0+"";// check this condtion of the Zero
+    var sql="SELECT * FROM `transactions` WHERE  Doc_ID = "+DRNAME+"; and Completed ="+0+"";// check this condtion of the Zero
  
    db.query(sql,function(err,result){
       if (err){     
@@ -402,7 +402,46 @@ app.get('/Doctor/GetProfile', function (req, res) {
  
      
      })});
+ //##########################################################################################
+
+ app.get('/Employee/confirmPayment', function (req, res) {
+  var Role=3;
+  var token = req.headers['authorization'];
+  console.log(token)
+  if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+  
+  jwt.verify(token, "thisistopsecret", function(err, decoded) {
+    if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
  
+    var patient_ID= req.body['patient_ID']
+     // we have the ID OF user in decoded.id variable
+    var sql="UPDATE `transactions` SET Paid="+1+" where patient_ID = "+patient_ID+";"
+ 
+   db.query(sql,function(err,result){
+      if (err){     
+         throw err;
+      }
+       console.log('Data updated !' + result[0]);
+ 
+       var Response = {
+         Data:result[0],
+         Success:true,
+         errors:null
+       }
+       res.send(Response)
+       
+      })
+ 
+     
+     })});
+
+
+
+
+
+
+
+
  //##########################################################################################3
 
 app.post('/Manger/AddEmp',function(req , res){
