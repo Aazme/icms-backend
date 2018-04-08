@@ -245,7 +245,132 @@ app.get('/Doctor/GetProfile', function (req, res) {
  
      
      })});
+ //##########################################################################################
+
+ app.get('/Doctor/GetAllPatient', function (req, res) {
+  var Role=3;
+  var token = req.headers['authorization'];
+  console.log(token)
+  if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+  
+  jwt.verify(token, "thisistopsecret", function(err, decoded) {
+    if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+      var DRNAME = req.body['DRNAME'];
+     // we have the ID OF user in decoded.id variable
+    var sql="SELECT * FROM `transactions` WHERE  Doc_ID = "+decoded.DRNAME+"; and Completed ="+0+"";// check this condtion of the Zero
  
+   db.query(sql,function(err,result){
+      if (err){     
+         throw err;
+      }
+       console.log('Data retrieved !' + result[0]);
+ 
+       var Response = {
+         Data:result[0],
+         Success:true,
+         errors:null
+       }
+       res.send(Response)
+       
+      })
+ 
+     
+     })});
+
+     //###############################################################################################################################
+  app.post('/Doctor/ActiveClinic', function (req, res) {
+    var Role=3;
+    
+    var token = req.headers['authorization'];
+    console.log(token)
+    if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+    
+    jwt.verify(token, "thisistopsecret", function(err, decoded) {
+      if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+      var Clname = req.body['Clname']
+''
+      var sql="UPDATE `clinics` SET avalibality = "+1+" WHERE Name='"+Clname+"'";
+   db.query(sql,function(err,result){
+    if (err){     
+       throw err;
+    }
+     console.log('Data editied !' + result[0]);
+
+     var Response = {
+       Data:result[0],
+       Success:true,
+       errors:null
+     }
+     res.send(Response)
+     
+    })
+
+   
+   })});
+
+   app.post('/Doctor/DeActiveClinic', function (req, res) {
+    var Role=3;
+    
+    var token = req.headers['authorization'];
+    console.log(token)
+    if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+    
+    jwt.verify(token, "thisistopsecret", function(err, decoded) {
+      if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+      var Clname = req.body['Clname']
+
+      var sql="UPDATE `clinics` SET avalibality ="+0+" WHERE  Name='"+Clname+"'";
+   db.query(sql,function(err,result){
+    if (err){     
+       throw err;
+    }
+     console.log('Data editied !' + result[0]);
+
+     var Response = {
+       Data:result[0],
+       Success:true,
+       errors:null
+     }
+     res.send(Response)
+     
+    })
+
+   
+   })});
+
+
+
+ //##########################################################################################
+ app.get('/Patient/history', function (req, res) {
+  var Role=3;
+  var token = req.headers['authorization'];
+  console.log(token)
+  if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+  
+  jwt.verify(token, "thisistopsecret", function(err, decoded) {
+    if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+ 
+     // we have the ID OF user in decoded.id variable
+     var patient_ID = req.body['patientID'];
+    var sql="SELECT * FROM `transactions` WHERE  user_ID = "+decoded.patient_ID+";"
+ 
+   db.query(sql,function(err,result){
+      if (err){     
+         throw err;
+      }
+       console.log('Data retrieved !' + result[0]);
+ 
+       var Response = {
+         Data:result[0],
+         Success:true,
+         errors:null
+       }
+       res.send(Response)
+       
+      })
+ 
+     
+     })});
  //##########################################################################################3
 
  app.get('/Employee/GetProfile', function (req, res) {
@@ -563,9 +688,10 @@ app.post('/Clinic/GetTime',function(req , res){
   
   jwt.verify(token, "thisistopsecret", function(err, decoded) {
     if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
- 
-var sql ="SELECT `availability`.`Days`, `availability`.`TIMEFROM`, `availability`.`TIMETO`, `doctors`.`Name`, `clinics`.`Name` FROM `availability` , `doctors` , `clinics` WHERE (( `doctors`.`Name` = 'HMED') AND ( clinics.Name = 'skull'))
-"
+    var Drname = req.body['Dname'];
+    var Clname = req.body['Clname'];
+var sql ="SELECT `availability`.`Days`, `availability`.`TIMEFROM`, `availability`.`TIMETO`, `doctors`.`Name`, `clinics`.`Name` FROM `availability` , `doctors` , `clinics` WHERE (( `doctors`.`Name` = '"+Dname+ "'') AND ( clinics.Name = '"+Clname+ "')"
+
 
 db.query(sql,function(err,result){
   if (err){     
