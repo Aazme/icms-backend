@@ -167,7 +167,7 @@ app.get('/Patient/GetProfile', function (req, res) {
     })});
 
 
-    app.get('/Patient/resetpassword', function (req, res) {
+    app.post('/user/resetpassword', function (req, res) {
       var Role=3;
       var token = req.headers['authorization'];
       console.log(token)
@@ -178,8 +178,22 @@ app.get('/Patient/GetProfile', function (req, res) {
      
          var oldpassword = req.body['oldpassword']
          var newpassword = req.body['newpassword']
-         if (oldpassword==decoded.password){ // check el if condition de 
-         var sql = "UPDATE `users` SET `password`="+newpassword+"WHERE where user_ID = "+decoded.userid+""
+         var oldpasswordquery = " SELECT `password` FROM `users` WHERE user_ID = "+decoded.userid+"";
+      //   var dboldpassword = ""
+
+         // execute oldpassword query, in order to retrieve the user's current password
+         db.query(oldpasswordquery,function(err,result){
+          if (err){     
+             throw err;
+          }
+          console.log(result[0].password);
+        var dboldpassword = result[0].password;
+        
+        console.log("---");
+        console.log(dboldpassword);
+        console.log("---");
+         if (oldpassword==dboldpassword){ // check el if condition de 
+         var sql = "UPDATE `users` SET `password`='"+newpassword+"' where user_ID = "+decoded.userid+""
          
      
        db.query(sql,function(err,result){
@@ -196,15 +210,18 @@ app.get('/Patient/GetProfile', function (req, res) {
            res.send(Response)
           
           })}
+          else {
           var Response = {
-            Data:result[0],
+            Data:null,
             Success:false,
             errors:"wrong old password"
           }
-          res.send(Response)
+          res.send(Response)}
          
          
-         })});
+         })
+        })
+        });
 
 
         
