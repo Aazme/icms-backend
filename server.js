@@ -981,6 +981,9 @@ var sqlllll = "INSERT INTO `transactions`( `Doc_ID`, `clinic_ID`, `patient_ID`, 
 })
 })
 })
+  })
+})
+
 //############################################################################################################
 /*
 1- get clinic id by name and check if available ( return error if not avail.)
