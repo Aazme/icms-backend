@@ -504,7 +504,6 @@ app.get('/Doctor/GetProfile', function (req, res) {
 
 
 app.post('/Doctor/Addprescription',function(req , res){
-
   var token = req.headers['authorization'];
   console.log(req.headers)
   if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
@@ -516,23 +515,35 @@ app.post('/Doctor/Addprescription',function(req , res){
   var Medicence = req.body['Medicence'];
   var Description = req.body['Description'];
   var Diagnosis = req.body['Diagnosis'];
+  var seql = " UPDATE `prescription` SET Diagnosis= '"+Diagnosis+"' "
+  db.query(seql,function(err,result){
+   
+    if (err){     
+        throw err;
+    }
+     console.log('diagonosis added ! created.!');
+    // res.send(result)
+    })
 
-  var sql ="INSERT INTO `perdescription`( `Medicence`, `Description`) VALUES ('"+Medicence+ "','"+Description+ "') where perscription_ID ='"+perscription_ID+ "' "
-  db.query(sql,function(err,result){
+  var sql = " INSERT INTO `perdescription`(`perscription_ID`, `Medicence`, `Description`) VALUES ('"+perscription_ID+"','"+Medicence+"','"+Description+"') ";
+  
+  
+   db.query(sql,function(err,result){
     if (err){     
         throw err;
     }
      console.log('Data added ! created.!');
-     res.send(result)
-    })
-    var seql = "INSERT INTO `prescription`( `Diagnosis`) VALUES ('"+Diagnosis+ "')  where perscription_ID ='"+perscription_ID+ "'"
-   db.query(seql,function(err,result){
-    if (err){     
-        throw err;
-    }
-     console.log('Data added ! created.!');
-     
-    })
+     var responemsg = {
+       data:null,
+       Success:true,
+       errors:null
+     }
+     res.send(responemsg)
+  })
+})
+});
+  
+  
   //#########################################################################################
 
   //delete token ??
@@ -795,7 +806,6 @@ app.post('/Manger/UpdateDoctor',function(req , res){
   
 
 var sql ="DELETE FROM `doctors` WHERE `Name` = '"+Name+ "'";
-"UPDATE `doctors` SET `Name`='"+Name+ "',`PhoneNumber`='"+PhoneNumber+ "',`specialized`='"+specialized+ "', `price`='"+price+ "'WHERE `Doc_ID`='"+Doc_ID+ "'";
 
 db.query(sql,function(err,result){
   if (err){     
@@ -806,9 +816,180 @@ db.query(sql,function(err,result){
   })
 })
 })
+//#######################################################################################
+app.post('/Emp/addreservation',function(req , res){
 
+  var token = req.headers['authorization'];
+  console.log(req.headers)
+  if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+  
+  jwt.verify(token, "thisistopsecret", function(err, decoded) {
+    if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+
+    var ClinicName = req.body['clinicID'];
+    var DoctorName = req.body['DoctorName'];
+    var emp_ID = req.body['emp_ID'];
+ var AppointmentDate= req.body['AppointmentDate'];
+
+    var sql="SELECT * FROM patient where user_ID = "+decoded.userid+";"
+
+    db.query(sql,function(err,result){
+       if (err){     
+        throw err;
+        var responemsg = {
+          data:"wrong clinic name",
+          Success:false,
+          error:"R1"
+        }
+        res.send(responemsg)
+        
+    }
+        console.log('Data retrieved !' + result[0]);
+  var patientid = result[0].patient_ID;
+       
+
+    var sql ="SELECT `clinic_ID` `avalibality` FROM `clinics` WHERE  `Name`='"+ClinicName+"'";
+
+db.query(sql,function(err,result){
+  if (err){     
+      throw err;
+      var responemsg = {
+        data:"wrong clinic name",
+        Success:false,
+        error:"R1"
+      }
+      res.send(responemsg)
+      
+  }
+   console.log('Data selected from clinics ! created.!');
+  if ( result[0].avalibality == 0  )
+
+  {
+    var responemsg = {
+      data:"Clinic not available",
+      Success:false,
+      error:"R1"
+    }
+    res.send(responemsg)
+
+  }
+   var clinicId = result[0].clinic_Id; 
+  
+
+     var sqll = " SELECT `Doc_ID` FROM `doctors` WHERE `Name` = '"+DoctorName+"'";
+
+     db.query(sqll,function(err,result){
+      if (err){     
+          throw err;
+          var responemsg = {
+            data:"wrong doctor name",
+            Success:false,
+            error:"R1"
+          }
+          res.send(responemsg)
+      }
+       console.log('Data founded ! created.!');
+      var doctorID= result.doc_ID
+      
+
+
+      var sq = "SELECT  `emp_Name`,  FROM `emp` WHERE `emp_ID`='"+emp_ID+"'";
+
+      db.query(sq,function(err,result){
+       if (err){     
+           throw err;
+           var responemsg = {
+             data:"wrong emp name",
+             Success:false,
+             error:"R1"
+           }
+           res.send(responemsg)
+       }
+        console.log('Data founded ! created.!');
+       var emp_ID= result.emp_ID
+
+
+      
+     var sqlll = " INSERT INTO `bill`(`TotalPrice`) VALUES ('0')";
+
+     db.query(sqlll,function(err,result){
+      if (err){     
+          throw err;
+          var responemsg = {
+            data:"wrong  in bill insertion",
+            Success:false,
+            error:"R1"
+          }
+       
+      }
+       console.log('bill created! created.!');
+      var bill =result[0].insertId; 
+      
+      
+      var sqllll = " INSERT INTO `prescription`(`perscription_ID`, `Diagnosis`) VALUES ()";
+
+     db.query(sqllll,function(err,result){
+      if (err){     
+          throw err;
+          var responemsg = {
+            data:"wrong  in prescription insertion",
+            Success:false,
+            error:"R1"
+          }
+       
+      }
+       console.log('peresctription added ! created.!');
+       var pre = result[0].insertId;
+      
+
+
+
+
+
+       
+
+
+
+
+var sqlllll = "INSERT INTO `transactions`( `Doc_ID`, `clinic_ID`, `patient_ID`, `bill_ID`, `emp_ID`, `perscription_ID`, `TransactionDate`, `AppointmentDate`, `Completed`, `Paid`) VALUES ('"+doctorID+"','"+clinicId+"','"+patientid+"','"+bill+"','"+emp_ID+"','"+pre+"','"+transactiondate+"','"+AppointmentDate+"',0,0)"
+
+
+       db.query(sqlllll,function(err,result){
+        if (err){     
+            throw err;
+            var responemsg = {
+              data:"wrong  in prescription insertion",
+              Success:false,
+              error:"R1"
+            }
+         
+        }
+         console.log('peresctription added ! created.!');
+
+
+
+
+
+
+
+        
+        }) 
+
+      }) 
+})
+})
+})
+})
+})
 //############################################################################################################
-/*billid = create new row in bill
+/*
+1- get clinic id by name and check if available ( return error if not avail.)
+2- get doctor id by name
+3- insert new row in bill
+4- insert new row in prescription
+
+
+billid = create new row in bill
 prescriptionId = create new row in prescription
 docid = get doctor id by name(given)
 clinicid = get clinic id by name(given)
