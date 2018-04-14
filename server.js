@@ -503,7 +503,7 @@ app.get('/Doctor/GetProfile', function (req, res) {
 //###############################################################################################
 
 
-/*app.post('/Doctor/Addprescription',function(req , res){
+app.post('/Doctor/Addprescription',function(req , res){
 
   var token = req.headers['authorization'];
   console.log(req.headers)
@@ -513,8 +513,35 @@ app.get('/Doctor/GetProfile', function (req, res) {
     if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
   
   var perscription_ID = req.body['perscription_ID'];
-  var sql ="INSERT INTO `perdescription`( `Medicence`, `Description`) VALUES ([value-1],[value-2],[value-3])*/
-  
+  var Medicence = req.body['Medicence'];
+  var Description = req.body['Description'];
+  var Diagnosis = req.body['Diagnosis'];
+
+  var sql ="INSERT INTO `perdescription`( `Medicence`, `Description`) VALUES ('"+Medicence+ "','"+Description+ "') where perscription_ID ='"+perscription_ID+ "' "
+  db.query(sql,function(err,result){
+    if (err){     
+        throw err;
+    }
+     console.log('Data added ! created.!');
+     res.send(result)
+    })
+    var seql = "INSERT INTO `prescription`( `Diagnosis`) VALUES ('"+Diagnosis+ "')  where perscription_ID ='"+perscription_ID+ "'"
+   db.query(seql,function(err,result){
+    if (err){     
+        throw err;
+    }
+     console.log('Data added ! created.!');
+     
+    })
+  //#########################################################################################
+
+  //delete token ??
+  /*app.get('/test', function (req, res) {
+    var body = "some body";
+    res.removeHeader('Transfer-Encoding');
+    res.removeHeader('X-Powered-By');
+    res.end(body);
+});*/
  //##########################################################################################3
 
 app.post('/Manger/AddEmp',function(req , res){
