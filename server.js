@@ -920,7 +920,7 @@ db.query(s,function(err,result){
        var emp_ID= result.emp_ID
 
 
-      
+      ///////////////////////////////////////////////////////////////////////////////////check da query
      var sqlll = " INSERT INTO `bill`(`TotalPrice`) VALUES ('0')";
 
      db.query(sqlll,function(err,result){
@@ -936,7 +936,7 @@ db.query(s,function(err,result){
        console.log('bill created! created.!');
       var bill =result[0].insertId; 
       
-      //check da query
+      /////////////////////////////////////////////////////////////////////////////////check da query
       var sqllll = " INSERT INTO `prescription`( `Diagnosis`) VALUES ()";
 
      db.query(sqllll,function(err,result){
@@ -1077,7 +1077,7 @@ db.query(s,function(err,result){
        var emp_ID= result.emp_ID
 
 
-      
+      //////////////////////////////////////////////////////////////////////////////////check da query
      var sqlll = " INSERT INTO `bill`(`TotalPrice`) VALUES ('0')";
 
      db.query(sqlll,function(err,result){
@@ -1093,7 +1093,7 @@ db.query(s,function(err,result){
        console.log('bill created! created.!');
       var bill =result[0].insertId; 
       
-      //check da query
+      ///////////////////////////////////////////////////////////////////////////////////check da query
       var sqllll = " INSERT INTO `prescription`( `Diagnosis`) VALUES ()";
 
      db.query(sqllll,function(err,result){
@@ -1133,8 +1133,31 @@ db.query(s,function(err,result){
 })
 })
 })
+//###########################################################################################################
+app.post('res/cancel',function(req , res){
 
+  var token = req.headers['authorization'];
+  console.log(req.headers)
+  if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+  
+  jwt.verify(token, "thisistopsecret", function(err, decoded) {
+    if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
 
+    var sql = "UPDATE `transactions` SET `cancelled`= '"+1+"'";
+    db.query(sql,function(err,result){
+      if (err){     
+         throw err;
+      }
+       console.log('res cancelled !' );
+ 
+       var Response = {
+         Data:result[0],
+         Success:true,
+         errors:null
+       }
+       res.send(Response)
+      
+      })
 //############################################################################################################
 /*
 1- get clinic id by name and check if available ( return error if not avail.)
