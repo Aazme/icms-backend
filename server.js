@@ -166,8 +166,8 @@ app.get('/Patient/GetProfile', function (req, res) {
     
     })});
 
-
-    app.post('/user/resetpassword', function (req, res) {
+//#######################################################################################################
+    app.post('/ResetPassword', function (req, res) {
       var Role=3;
       var token = req.headers['authorization'];
       console.log(token)
@@ -226,7 +226,7 @@ app.get('/Patient/GetProfile', function (req, res) {
 
         
 //##############################################################################################
-app.post('/Patient/EditProfile', function (req, res) {
+app.post('/Patient/editProfile', function (req, res) {
   var Role=3;
   
   var token = req.headers['authorization'];
@@ -308,7 +308,7 @@ app.get('/Doctor/GetProfile', function (req, res) {
      })});
  //##########################################################################################
 
- app.get('/Doctor/GetAllPatient', function (req, res) {
+ app.get('/Patient/GetAll', function (req, res) {
   var Role=3;
   var token = req.headers['authorization'];
   console.log(token)
@@ -319,15 +319,6 @@ app.get('/Doctor/GetProfile', function (req, res) {
       var DRNAME = req.body['DRNAME'];
      // we have the ID OF user in decoded.id variable
      // and transaction cancel = 0 
-
-
-
-
-     //
-     //
-     //
-     //
-     //
      
     var sql="SELECT * FROM `transactions` WHERE  Doc_ID = "+DRNAME+" AND cancelled="+0+" AND Completed ="+0+"";// check this condtion of the Zero
  
@@ -342,6 +333,7 @@ app.get('/Doctor/GetProfile', function (req, res) {
          Success:true,
          errors:null
        }
+  
        res.send(Response)
        
       })
@@ -443,6 +435,8 @@ app.get('/Doctor/GetProfile', function (req, res) {
  
      
      })});
+     //#######################################################################################
+     
  //##########################################################################################3
 
  app.get('/Employee/GetProfile', function (req, res) {
@@ -476,7 +470,7 @@ app.get('/Doctor/GetProfile', function (req, res) {
      })});
  //##########################################################################################
 
- app.get('/Employee/confirmPayment', function (req, res) {
+ app.get('/reservation/ConfirmPayment', function (req, res) {
   var Role=3;
   var token = req.headers['authorization'];
   console.log(token)
@@ -514,7 +508,7 @@ app.get('/Doctor/GetProfile', function (req, res) {
 //###############################################################################################
 
 
-app.post('/Doctor/Addprescription',function(req , res){
+app.post('/prescription/Update',function(req , res){
   var token = req.headers['authorization'];
   console.log(req.headers)
   if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
@@ -526,7 +520,7 @@ app.post('/Doctor/Addprescription',function(req , res){
   var Medicence = req.body['Medicence'];
   var Description = req.body['Description'];
   var Diagnosis = req.body['Diagnosis'];
-  var seql = " UPDATE `prescription` SET Diagnosis= '"+Diagnosis+"' "
+  var seql = " UPDATE `prescription` SET Diagnosis= '"+Diagnosis+"' where perscription_ID = '"+perscription_ID+"';"
   db.query(seql,function(err,result){
    
     if (err){     
@@ -535,6 +529,22 @@ app.post('/Doctor/Addprescription',function(req , res){
      console.log('diagonosis added ! created.!');
     // res.send(result)
     })
+//#########################################################################################
+app.post('/perdescription/Add',function(req , res){
+  var token = req.headers['authorization'];
+  console.log(req.headers)
+  if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+  
+  jwt.verify(token, "thisistopsecret", function(err, decoded) {
+    if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+  
+  var perscription_ID = req.body['perscription_ID'];
+  var Medicence = req.body['Medicence'];
+  var Description = req.body['Description'];
+  var Diagnosis = req.body['Diagnosis'];
+
+
+
 
   var sql = " INSERT INTO `perdescription`(`perscription_ID`, `Medicence`, `Description`) VALUES ('"+perscription_ID+"','"+Medicence+"','"+Description+"') ";
   
@@ -554,7 +564,39 @@ app.post('/Doctor/Addprescription',function(req , res){
 })
 });
   
+  //#################################################################################################################
+  app.post('/prescription/Add',function(req , res){
+    var token = req.headers['authorization'];
+    console.log(req.headers)
+    if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+    
+    jwt.verify(token, "thisistopsecret", function(err, decoded) {
+      if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+    
+    var perscription_ID = req.body['perscription_ID'];
   
+    var Description = req.body['Description'];
+    var Diagnosis = req.body['Diagnosis'];
+  
+  
+  
+  
+    var sql = "INSERT INTO `prescription`(`perscription_ID`, `Diagnosis`) VALUES ('"+perscription_ID+"','"+Diagnosis+"')";
+    
+     db.query(sql,function(err,result){
+      if (err){     
+          throw err;
+      }
+       console.log('Data added ! created.!');
+       var responemsg = {
+         data:null,
+         Success:true,
+         errors:null
+       }
+       res.send(responemsg)
+    })
+  })
+  });
   //#########################################################################################
 
   //delete token ??
@@ -566,7 +608,7 @@ app.post('/Doctor/Addprescription',function(req , res){
 });*/
  //##########################################################################################3
 
-app.post('/Manger/AddEmp',function(req , res){
+app.post('/Employee/Add',function(req , res){
 
   var token = req.headers['authorization'];
   console.log(req.headers)
@@ -592,8 +634,8 @@ db.query(sql,function(err,result){
   })
 })
 })
-
-app.post('/Manger/DeleteEmp',function(req , res){
+//########################################################################################
+app.post('/Employee/Delete',function(req , res){
 
   var token = req.headers['authorization']; // 23rf mnen an el token da vailed 
   console.log(req.headers)
@@ -614,8 +656,8 @@ db.query(sql,function(err,result){
   })
 })
 })
-
-app.post('/Manger/UpdateEmp',function(req , res){
+//################################################################################################
+app.post('/Employee/Update',function(req , res){
 
   var token = req.headers['authorization']; 
   if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
@@ -644,7 +686,7 @@ db.query(sql,function(err,result){
 
 //##################################################################################333
 
-app.post('/Manger/AddClinic',function(req , res){
+app.post('/Clinic/Add',function(req , res){
 
   var token = req.headers['authorization'];
   console.log(req.headers)
@@ -674,7 +716,7 @@ db.query(sql,function(err,result){
 })
 })
 
-app.post('/Manger/DeleteClinic',function(req , res){
+app.post('/Clinic/Delete',function(req , res){
 
   var token = req.headers['authorization'];
   console.log(req.headers)
@@ -699,7 +741,7 @@ db.query(sql,function(err,result){
 
 
 
-app.post('/Manger/UpdateClinic',function(req , res){
+app.post('/Clinic/Update',function(req , res){
 
   var token = req.headers['authorization'];
   console.log(req.headers)
@@ -745,7 +787,7 @@ app.post('/Clinic/GetAll ',function(req , res){
     })
 //###########################################################################################################
 
-app.post('/Manger/AddDoctor',function(req , res){
+app.post('/Doctor/Add',function(req , res){
 
   var token = req.headers['authorization'];
   console.log(req.headers)
@@ -772,7 +814,7 @@ db.query(sql,function(err,result){
 })
 })
 
-app.post('/Manger/DeleteDoctor',function(req , res){
+app.post('/Doctor/Delete',function(req , res){
 
   var token = req.headers['authorization'];
   console.log(req.headers)
@@ -800,7 +842,7 @@ db.query(sql,function(err,result){
 })
 
 
-app.post('/Manger/UpdateDoctor',function(req , res){
+app.post('/Doctor/Update',function(req , res){
 
   var token = req.headers['authorization'];
   console.log(req.headers)
@@ -1158,7 +1200,175 @@ app.post('res/cancel',function(req , res){
        res.send(Response)
       
       })
+      //##########################################################################################################
+      app.post('bill/add',function(req , res){
+
+        var token = req.headers['authorization'];
+        console.log(req.headers)
+        if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+        
+        jwt.verify(token, "thisistopsecret", function(err, decoded) {
+          if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+      
+          var bill_id= req.body['bill_ID'];
+          var totalprice= req.body['TotalPrice'];
+          var sql = "INSERT INTO `bill`(`bill_ID`, `TotalPrice`) VALUES ('"+bill_id+"','"+totalprice+"')";
+          db.query(sql,function(err,result){
+            if (err){     
+               throw err;
+            }
+             console.log('added bill error  cancelled !' );
+       
+             var Response = {
+               Data:result[0],
+               Success:true,
+               errors:null
+             }
+             res.send(Response)
+            })
 //############################################################################################################
+app.post('bill/edit',function(req , res){
+
+  var token = req.headers['authorization'];
+  console.log(req.headers)
+  if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+  
+  jwt.verify(token, "thisistopsecret", function(err, decoded) {
+    if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+
+    var bill_id= req.body['bill_ID'];
+    var totalprice= req.body['TotalPrice'];
+    var sql =" UPDATE `bill` SET `bill_ID`='"+bill_id+"',`TotalPrice`='"+totalprice+"'";
+    
+
+    db.query(sql,function(err,result){
+      if (err){     
+         throw err;
+      }
+       console.log('bill canot  be edited !' );
+ 
+       var Response = {
+         Data:result[0],
+         Success:true,
+         errors:null
+       }
+       res.send(Response)
+      })
+//############################################################################################################
+app.post('bill/delete',function(req , res){
+
+  var token = req.headers['authorization'];
+  console.log(req.headers)
+  if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+  
+  jwt.verify(token, "thisistopsecret", function(err, decoded) {
+    if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+
+    var bill_id= req.body['bill_ID'];
+   var sql =" UPDATE `bill` SET `Deleted`='"+1+"' WHERE bill_id ='"+bill_id+"' ";
+    
+    
+
+    db.query(sql,function(err,result){
+      if (err){     
+         throw err;
+      }
+       console.log('res cancelled !' );
+ 
+       var Response = {
+         Data:result[0],
+         Success:true,
+         errors:null
+       }
+       res.send(Response)
+      })
+
+//#############################################################################################################
+app.post('bill/get',function(req , res){
+
+  var token = req.headers['authorization'];
+  console.log(req.headers)
+  if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+  
+  jwt.verify(token, "thisistopsecret", function(err, decoded) {
+    if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+
+    var bill_id= req.body['bill_ID'];
+   var sql ="SELECT * FROM `bill` ";
+    
+    
+
+    db.query(sql,function(err,result){
+      if (err){     
+         throw err;
+      }
+       console.log('res cancelled !' );
+ 
+       var Response = {
+         Data:result[0],
+         Success:true,
+         errors:null
+       }
+       res.send(Response)
+      })
+      //########################################################################################################3
+      app.post('/prescription/Get',function(req , res){
+
+        var token = req.headers['authorization'];
+        console.log(req.headers)
+        if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+        
+        jwt.verify(token, "thisistopsecret", function(err, decoded) {
+          if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+      
+          var perscription_ID= req.body['perscription_ID'];
+         var sql ="SELECT * FROM `prescription`  where perscription_ID= '"+perscription_ID+"'";
+          
+          
+      
+          db.query(sql,function(err,result){
+            if (err){     
+               throw err;
+            }
+             console.log('got all the prescription' );
+       
+             var Response = {
+               Data:result[0],
+               Success:true,
+               errors:null
+             }
+             res.send(Response)
+            })
+            //#####################################################################################################
+            app.post('/prescription/Delete',function(req , res){
+
+              var token = req.headers['authorization'];
+              console.log(req.headers)
+              if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+              
+              jwt.verify(token, "thisistopsecret", function(err, decoded) {
+                if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+            
+                var perscription_ID= req.body['perscription_ID'];
+               var sql =" UPDATE `prescription` SET ``Deleted``='"+1+"' WHERE perscription_ID ='"+perscription_ID+"' ";
+                
+                
+            
+                db.query(sql,function(err,result){
+                  if (err){     
+                     throw err;
+                  }
+                   console.log('res cancelled !' );
+             
+                   var Response = {
+                     Data:result[0],
+                     Success:true,
+                     errors:null
+                   }
+                   res.send(Response)
+                  })
+            
+//#############################################################################################################
 /*
 1- get clinic id by name and check if available ( return error if not avail.)
 2- get doctor id by name
@@ -1176,7 +1386,7 @@ completed = 0
 paid = 0
 appointmentdate = (given)
 Transactiondate = current */
-//#########################################
+//#########################################**************************************************#################
 app.post('/Clinic/GetTime',function(req , res){
 
   var token = req.headers['authorization'];
@@ -1205,10 +1415,37 @@ db.query(sql,function(err,result){
   })
 })
 })
+//##########################################################################################################
+app.post('/Clinic/Get',function(req , res){
 
+  var token = req.headers['authorization'];
+  console.log(req.headers)
+  if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+  
+  jwt.verify(token, "thisistopsecret", function(err, decoded) {
+    if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+  
+    var clinic_ID = req.body['clinic_ID'];
+var sql ="SELECT * FROM `clinics` where clinic_ID = '"+clinic_ID+"'";
+
+db.query(sql,function(err,result){
+  if (err){     
+      throw err;
+  }
+   console.log('Data selected !');
+   
+          var Response = {
+         Data:result,
+         Success:true,
+         errors:null
+       }
+       res.send(Response)
+  })
+})
+})
 
 //############################################################################################################
-app.post('/Manger/GetAllEmployees',function(req , res){
+app.post('/Employee/GetAll',function(req , res){
 
   var token = req.headers['authorization'];
   console.log(req.headers)
@@ -1235,7 +1472,7 @@ db.query(sql,function(err,result){
 })
 })
 
-app.post('/Manger/GetAllDoctors',function(req , res){
+app.post('/Doctor/GetAll',function(req , res){
 
   var token = req.headers['authorization'];
   console.log(req.headers)
@@ -1262,32 +1499,7 @@ db.query(sql,function(err,result){
 })
 })
 
-app.post('/Manger/GetAllPatient',function(req , res){
 
-  var token = req.headers['authorization'];
-  console.log(req.headers)
-  if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
-  
-  jwt.verify(token, "thisistopsecret", function(err, decoded) {
-    if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
- 
-var sql ="SELECT * FROM Patient"
-
-db.query(sql,function(err,result){
-  if (err){     
-      throw err;
-  }
-   console.log('Data added ! created.!');
-   
-          var Response = {
-         Data:result,
-         Success:true,
-         errors:null
-       }
-       res.send(Response)
-  })
-})
-})
 
 //######################################################################################################
 
